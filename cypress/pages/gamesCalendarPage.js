@@ -1,14 +1,14 @@
 class GamesCalendarPage {
   get calendarButton() {
-    return cy.get('span[data-ng-i18next="schedule.calendar"]'); // Selector específico
+    return cy.get('span[data-ng-i18next="schedule.calendar"]'); 
   }
 
   selectDate(day) {
-    cy.contains('.day', day).click(); // Selecciona el día dentro del calendario
+    cy.contains('.day', day).click(); 
   }
 
   get gamesForSelectedDate() {
-    return cy.get('.game-card'); // Ajusta al selector real para los juegos
+    return cy.get('.game-card'); 
   }
 }
 

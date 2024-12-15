@@ -1,14 +1,14 @@
 class LoginPage {
   get emailField() {
-    return cy.get('[name="email"]'); // Ajusta al selector real del campo email
+    return cy.get('[name="email"]'); 
   }
 
   get passwordField() {
-    return cy.get('[name="password"]'); // Ajusta al selector real del campo password
+    return cy.get('[name="password"]'); 
   }
 
   get loginButton() {
-    return cy.get('button[type="submit"]'); // Ajusta al selector real del botón de login
+    return cy.get('button[type="submit"]'); 
   }
 
   login(email, password) {

@@ -2,23 +2,22 @@ import SchedulePage from '../pages/schedulePage';
 
 describe('Schedule Filters Tests', () => {
     beforeEach(() => {
-        cy.visit('https://www.nba.com/schedule'); // URL de Schedule
-        SchedulePage.acceptPrivacyBanner(); // Maneja el banner de cookies
+        cy.visit('https://www.nba.com/schedule'); 
+        SchedulePage.acceptPrivacyBanner(); 
     });
 
     it('should filter by Regular Season', () => {
-        // Seleccionar la opción "Regular Season"
-        SchedulePage.selectSeasonTypeOption('Regular Season'); // Usa el atributo "value" de la opción
+    
+        SchedulePage.selectSeasonTypeOption('Regular Season'); 
 
-        // Validar que el filtro aplicó correctamente
-        cy.get('select[name="season"]').should('have.value', 'Regular Season'); // Verifica que el valor seleccionado sea correcto
+        cy.get('select[name="season"]').should('have.value', 'Regular Season'); 
     });
 
     it('should filter by NBA Cup', () => {
-        // Seleccionar la opción "NBA Cup"
-        SchedulePage.selectSeasonTypeOption('NBA Cup'); // Usa el atributo "value" de la opción
+       
+        SchedulePage.selectSeasonTypeOption('NBA Cup'); 
 
-        // Validar que el filtro aplicó correctamente
-        cy.get('select[name="season"]').should('have.value', 'NBA Cup'); // Verifica que el valor seleccionado sea correcto
+        
+        cy.get('select[name="season"]').should('have.value', 'NBA Cup'); 
     });
 });

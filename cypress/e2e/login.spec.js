@@ -2,10 +2,10 @@ import LoginPage from '../pages/loginPage';
 
 describe('Login Tests', () => {
   beforeEach(() => {
-    cy.visit('https://www.nba.com/account/sign-in'); // URL del login
+    cy.visit('https://www.nba.com/account/sign-in'); 
 
-    // Interactúa con el banner de privacidad si aparece
-    cy.get('#onetrust-accept-btn-handler', { timeout: 10000 }) // Selector exacto del botón
+
+    cy.get('#onetrust-accept-btn-handler', { timeout: 10000 }) 
       .click({ force: true });
   });
 
@@ -14,11 +14,10 @@ describe('Login Tests', () => {
       const { email, password } = users.validUser;
       LoginPage.login(email, password);
 
-      // Verifica si hay redirección
+     
       cy.url().should('not.include', 'account/sign-in');
 
-      // Valida un texto visible después del login exitoso
-      cy.contains('Welcome').should('be.visible'); // Cambia "Welcome" según el texto visible tras el login
+      cy.contains('Welcome').should('be.visible'); 
     });
   });
 
@@ -27,8 +26,8 @@ describe('Login Tests', () => {
       const { email, password } = users.invalidUser;
       LoginPage.login(email, password);
 
-      // Verifica mensaje de error en la página
-      cy.contains('Invalid email or password').should('be.visible'); // Cambia según el mensaje real de error
+    
+      cy.contains('Invalid email or password').should('be.visible'); 
     });
   });
 });

@@ -1,23 +1,23 @@
-// Manejo global de excepciones para evitar que errores no críticos interrumpan las pruebas
+
 Cypress.on('uncaught:exception', (err, runnable) => {
-  // Ignora errores específicos relacionados con el DOM
+
   if (err.message.includes("Failed to execute 'removeChild' on 'Node'")) {
-      return false; // Evitar que Cypress detenga la prueba
+      return false; 
   }
 
-  // Ignora errores específicos relacionados con scripts externos (_satellite_runScript19)
+ 
   if (err.message.includes('_satellite_runScript19 is not a function')) {
-      return false; // Evitar que Cypress detenga la prueba
+      return false; 
   }
 
-  // Permitir otros errores
+
   return true;
 });
 
 class WatchPage {
   /**
-   * Maneja el banner de privacidad si aparece.
-   * Hace clic en el botón "Aceptar" del banner de cookies.
+   * 
+   * 
    * @returns {Cypress.Chainable<JQuery<HTMLElement>>}
    */
   acceptPrivacyBanner() {
@@ -25,8 +25,8 @@ class WatchPage {
   }
 
   /**
-   * Obtiene el cuadro específico del video que queremos seleccionar.
-   * El selector está basado en la jerarquía HTML actual de la página.
+   * 
+   * 
    * @returns {Cypress.Chainable<JQuery<HTMLElement>>}
    */
   get specificVideoBox() {
@@ -35,9 +35,7 @@ class WatchPage {
       );
   }
 
-  /**
-   * Hace clic en el cuadro del video específico.
-   */
+  
   clickSpecificVideoBox() {
       this.specificVideoBox.click();
   }
