@@ -1,0 +1,1632 @@
+{
+	"info": {
+		"_postman_id": "aca7a064-a074-45cf-a4f3-5887e7687a00",
+		"name": "Test DataUSE API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34653502"
+	},
+	"item": [
+		{
+			"name": "Doctoral Universities",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"const template = `\r",
+							"<html>\r",
+							"    <head>\r",
+							"        <style>\r",
+							"            table {\r",
+							"                width: 100%;\r",
+							"                border-collapse: collapse;\r",
+							"            }\r",
+							"            th, td {\r",
+							"                border: 1px solid #ddd;\r",
+							"                padding: 8px;\r",
+							"                text-align: left;\r",
+							"            }\r",
+							"            th {\r",
+							"                background-color: #4CAF50;\r",
+							"                color: white;\r",
+							"            }\r",
+							"        </style>\r",
+							"    </head>\r",
+							"    <body>\r",
+							"        <h2>List of University</h2>\r",
+							"        <table>\r",
+							"            <thead>\r",
+							"                <tr>\r",
+							"                    <th>ID</th>\r",
+							"                    <th>Name</th>\r",
+							"                    <th>Dimension</th>\r",
+							"                </tr>\r",
+							"            </thead>\r",
+							"            <tbody>\r",
+							"                {{#each jsonData}}\r",
+							"                    <tr>\r",
+							"                        <td>{{id}}</td>\r",
+							"                        <td>{{name}}</td>\r",
+							"                        <td>{{dimension}}</td>\r",
+							"                    </tr>\r",
+							"                {{/each}}\r",
+							"            </tbody>\r",
+							"        </table>\r",
+							"    </body>\r",
+							"</html>\r",
+							"`;\r",
+							"\r",
+							"\r",
+							"pm.visualizer.set(template, {\r",
+							"    jsonData: jsonData \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Field Name can't be null\", function () {\r",
+							"    const jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[0].name).to.not.be.null;\r",
+							"});\r",
+							"\r",
+							"\r",
+							"const schema = {\r",
+							"  type: \"array\",  // La respuesta es un array\r",
+							"  items: {\r",
+							"    type: \"object\",\r",
+							"    properties: {\r",
+							"      id: { type: \"string\" },\r",
+							"      name: { type: \"string\" },\r",
+							"      dimension: { type: \"string\" }\r",
+							"    },\r",
+							"    required: [\"id\", \"name\", \"dimension\"] // Campos obligatorios\r",
+							"  }\r",
+							"};\r",
+							"\r",
+							"\r",
+							"pm.test(\"Validate JSON structure\", function () {\r",
+							"  pm.response.to.have.jsonSchema(schema);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"The response has a 200 status code\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validate that there are no errors\", function () {\r",
+							"    pm.expect(pm.response.text()).to.not.include(\"error\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Windows\""
+					},
+					{
+						"key": "Referer",
+						"value": ""
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"131\", \"Chromium\";v=\"131\", \"Not_A Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/university/similar/doctoral-universities",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"university",
+						"similar",
+						"doctoral-universities"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Degrees",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"\r",
+							"let results = response.results.map(item => ({\r",
+							"    Name: item.name || \"N/A\",\r",
+							"    Dimension: item.dimension || \"N/A\",\r",
+							"    Hierarchy: item.hierarchy || \"N/A\",\r",
+							"    Key: item.key || \"N/A\",\r",
+							"    ImageURL: item.image?.url || \"No image available\",\r",
+							"    UpdatedAt: item.image?.updatedAt || \"N/A\",\r",
+							"    Alts: item.alts?.join(\", \") || \"No alts\"\r",
+							"}));\r",
+							"\r",
+							"\r",
+							"let tableRows = results.map(data => `\r",
+							"    <tr>\r",
+							"        <td>${data.Name}</td>\r",
+							"        <td>${data.Dimension}</td>\r",
+							"        <td>${data.Hierarchy}</td>\r",
+							"        <td>${data.Key}</td>\r",
+							"        <td>${data.ImageURL !== \"No image available\" \r",
+							"            ? `<a href=\"${data.ImageURL}\" target=\"_blank\">View Image</a>` \r",
+							"            : \"No image available\"}</td>\r",
+							"    </tr>\r",
+							"`).join('');\r",
+							"\r",
+							"\r",
+							"let htmlOutput = `\r",
+							"    <style>\r",
+							"        table {\r",
+							"            border-collapse: collapse;\r",
+							"            width: 100%;\r",
+							"        }\r",
+							"        th, td {\r",
+							"            border: 1px solid #ddd;\r",
+							"            padding: 8px;\r",
+							"            text-align: left;\r",
+							"        }\r",
+							"        th {\r",
+							"            background-color: #f4f4f4;\r",
+							"        }\r",
+							"    </style>\r",
+							"    <h3>Degrees</h3>\r",
+							"    <table>\r",
+							"        <thead>\r",
+							"            <tr>\r",
+							"                <th>Name</th>\r",
+							"                <th>Dimension</th>\r",
+							"                <th>Hierarchy</th>\r",
+							"                <th>Key</th>\r",
+							"                <th>Image</th>\r",
+							"            </tr>\r",
+							"        </thead>\r",
+							"        <tbody>\r",
+							"            ${tableRows}\r",
+							"        </tbody>\r",
+							"    </table>\r",
+							"`;\r",
+							"\r",
+							"\r",
+							"pm.visualizer.set(htmlOutput);\r",
+							"\r",
+							"\r",
+							"pm.test(\"Dynamic Data Extraction\", function () {\r",
+							"    pm.expect(response.results).to.be.an('array').that.is.not.empty;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Schema Validation\", function () {\r",
+							"    pm.expect(response.results[0]).to.have.property(\"name\");\r",
+							"    pm.expect(response.results[0]).to.have.property(\"dimension\");\r",
+							"    pm.expect(response.results[0]).to.have.property(\"hierarchy\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"HTTP Status Validation\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Windows\""
+					},
+					{
+						"key": "Referer",
+						"value": ""
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"131\", \"Chromium\";v=\"131\", \"Not_A Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/searchLegacy/?limit=100&dimension=CIP&q=",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"searchLegacy",
+						""
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "100"
+						},
+						{
+							"key": "dimension",
+							"value": "CIP"
+						},
+						{
+							"key": "q",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Universities",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"\r",
+							"let results = response.results.map(item => ({\r",
+							"    Name: item.name || \"N/A\",\r",
+							"    Dimension: item.dimension || \"N/A\",\r",
+							"    Hierarchy: item.hierarchy || \"N/A\",\r",
+							"    Key: item.key || \"N/A\",\r",
+							"    Alts: item.alts ? item.alts.join(\", \") : \"No alts\",\r",
+							"    Image: item.image && item.image !== false ? \"Available\" : \"Not Available\"\r",
+							"}));\r",
+							"\r",
+							"\r",
+							"let tableRows = results.map(data => `\r",
+							"    <tr>\r",
+							"        <td>${data.Name}</td>\r",
+							"        <td>${data.Dimension}</td>\r",
+							"        <td>${data.Hierarchy}</td>\r",
+							"        <td>${data.Key}</td>\r",
+							"        <td>${data.Alts}</td>\r",
+							"        <td>${data.Image}</td>\r",
+							"    </tr>\r",
+							"`).join('');\r",
+							"\r",
+							"\r",
+							"let htmlOutput = `\r",
+							"    <style>\r",
+							"        table {\r",
+							"            border-collapse: collapse;\r",
+							"            width: 100%;\r",
+							"        }\r",
+							"        th, td {\r",
+							"            border: 1px solid #ddd;\r",
+							"            padding: 8px;\r",
+							"            text-align: left;\r",
+							"        }\r",
+							"        th {\r",
+							"            background-color: #f4f4f4;\r",
+							"        }\r",
+							"    </style>\r",
+							"    <h3>Universities API Visualization</h3>\r",
+							"    <table>\r",
+							"        <thead>\r",
+							"            <tr>\r",
+							"                <th>Name</th>\r",
+							"                <th>Dimension</th>\r",
+							"                <th>Hierarchy</th>\r",
+							"                <th>Key</th>\r",
+							"                <th>Alts</th>\r",
+							"                <th>Image</th>\r",
+							"            </tr>\r",
+							"        </thead>\r",
+							"        <tbody>\r",
+							"            ${tableRows}\r",
+							"        </tbody>\r",
+							"    </table>\r",
+							"`;\r",
+							"\r",
+							"\r",
+							"pm.visualizer.set(htmlOutput);\r",
+							"\r",
+							"// 6. Validaciones\r",
+							"pm.test(\"HTTP Status Code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has 'results' array\", function () {\r",
+							"    pm.expect(response).to.have.property('results');\r",
+							"    pm.expect(response.results).to.be.an('array').that.is.not.empty;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Each university has required fields\", function () {\r",
+							"    response.results.forEach(item => {\r",
+							"        pm.expect(item).to.have.property(\"name\");\r",
+							"        pm.expect(item).to.have.property(\"dimension\");\r",
+							"        pm.expect(item).to.have.property(\"hierarchy\");\r",
+							"        pm.expect(item).to.have.property(\"key\");\r",
+							"        pm.expect(item).to.have.property(\"alts\");\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Image field is handled correctly\", function () {\r",
+							"    response.results.forEach(item => {\r",
+							"        if (item.image) {\r",
+							"            pm.expect(item.image).to.be.oneOf([false, Object(item.image)]);\r",
+							"        }\r",
+							"    });\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Windows\""
+					},
+					{
+						"key": "Referer",
+						"value": ""
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"131\", \"Chromium\";v=\"131\", \"Not_A Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/searchLegacy/?limit=100&dimension=University&q=",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"searchLegacy",
+						""
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "100"
+						},
+						{
+							"key": "dimension",
+							"value": "University"
+						},
+						{
+							"key": "q",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Products&Services",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"pm.test(\"HTTP Status Code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is a valid JSON\", function () {\r",
+							"    pm.expect(response).to.be.an('object');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Each product/service has required fields\", function () {\r",
+							"    response.results.forEach(item => {\r",
+							"        pm.expect(item).to.have.property(\"name\");\r",
+							"        pm.expect(item).to.have.property(\"dimension\");\r",
+							"        pm.expect(item).to.have.property(\"hierarchy\");\r",
+							"        pm.expect(item).to.have.property(\"key\");\r",
+							"        pm.expect(item).to.have.property(\"alts\");\r",
+							"        pm.expect(item).to.have.property(\"image\");\r",
+							"        if (item.image) {\r",
+							"            pm.expect(item.image).to.have.property(\"url\");\r",
+							"            pm.expect(item.image).to.have.property(\"author\");\r",
+							"        }\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"let results = response.results.map(item => ({\r",
+							"    Name: item.name || \"N/A\",\r",
+							"    Dimension: item.dimension || \"N/A\",\r",
+							"    Hierarchy: item.hierarchy || \"N/A\",\r",
+							"    Key: item.key || \"N/A\",\r",
+							"    Alts: item.alts ? item.alts.join(\", \") : \"No alts\",\r",
+							"    Image: item.image?.url || \"No image\",\r",
+							"    Author: item.image?.author || \"N/A\",\r",
+							"    UpdatedAt: item.image?.updatedAt || \"N/A\"\r",
+							"}));\r",
+							"\r",
+							"let tableRows = results.map(data => `\r",
+							"    <tr>\r",
+							"        <td>${data.Name}</td>\r",
+							"        <td>${data.Dimension}</td>\r",
+							"        <td>${data.Hierarchy}</td>\r",
+							"        <td>${data.Key}</td>\r",
+							"        <td><a href=\"${data.Image}\" target=\"_blank\">${data.Image}</a></td>\r",
+							"    </tr>\r",
+							"`).join('');\r",
+							"\r",
+							"let htmlOutput = `\r",
+							"    <style>\r",
+							"        table {\r",
+							"            border-collapse: collapse;\r",
+							"            width: 100%;\r",
+							"        }\r",
+							"        th, td {\r",
+							"            border: 1px solid #ddd;\r",
+							"            padding: 8px;\r",
+							"            text-align: left;\r",
+							"        }\r",
+							"        th {\r",
+							"            background-color: #f4f4f4;\r",
+							"        }\r",
+							"    </style>\r",
+							"    <h3>Products & Services API Visualization</h3>\r",
+							"    <table>\r",
+							"        <thead>\r",
+							"            <tr>\r",
+							"                <th>Name</th>\r",
+							"                <th>Dimension</th>\r",
+							"                <th>Hierarchy</th>\r",
+							"                <th>Key</th>\r",
+							"                <th>Image</th>\r",
+							"\r",
+							"            </tr>\r",
+							"        </thead>\r",
+							"        <tbody>\r",
+							"            ${tableRows}\r",
+							"        </tbody>\r",
+							"    </table>\r",
+							"`;\r",
+							"\r",
+							"pm.visualizer.set(htmlOutput);\r",
+							"\r",
+							"pm.test(\"At least one result exists\", function () {\r",
+							"    pm.expect(response.results.length).to.be.above(0);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"All fields have valid data\", function () {\r",
+							"    response.results.forEach(item => {\r",
+							"        pm.expect(item.name).to.be.a('string');\r",
+							"        pm.expect(item.dimension).to.be.a('string');\r",
+							"        pm.expect(item.hierarchy).to.be.a('string');\r",
+							"        pm.expect(item.key).to.be.a('string');\r",
+							"    });\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Windows\""
+					},
+					{
+						"key": "Referer",
+						"value": ""
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"131\", \"Chromium\";v=\"131\", \"Not_A Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/searchLegacy/?limit=100&dimension=NAPCS&q=",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"searchLegacy",
+						""
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "100"
+						},
+						{
+							"key": "dimension",
+							"value": "NAPCS"
+						},
+						{
+							"key": "q",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "occupations",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"\r",
+							"pm.test(\"Validation: Each occupation has the fields\", function () {\r",
+							"    response.results.forEach(item => {\r",
+							"        pm.expect(item).to.have.property(\"name\");\r",
+							"        pm.expect(item).to.have.property(\"dimension\");\r",
+							"        pm.expect(item).to.have.property(\"hierarchy\");\r",
+							"        pm.expect(item).to.have.property(\"key\");\r",
+							"\r",
+							"        if (item.image) {\r",
+							"            pm.expect(item.image).to.have.property(\"url\");\r",
+							"            pm.expect(item.image).to.have.property(\"author\");\r",
+							"        }\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"\r",
+							"let results = response.results.map(item => ({\r",
+							"    Name: item.name || \"N/A\",\r",
+							"    Dimension: item.dimension || \"N/A\",\r",
+							"    Hierarchy: item.hierarchy || \"N/A\",\r",
+							"    Key: item.key || \"N/A\",\r",
+							"    Alts: item.alts ? item.alts.join(\", \") : \"No alts\",\r",
+							"    ImageURL: item.image?.url || \"No image\",\r",
+							"    Author: item.image?.author || \"N/A\",\r",
+							"    UpdatedAt: item.image?.updatedAt || \"N/A\"\r",
+							"}));\r",
+							"\r",
+							"\r",
+							"let tableRows = results.map(data => `\r",
+							"    <tr>\r",
+							"        <td>${data.Name}</td>\r",
+							"        <td>${data.Dimension}</td>\r",
+							"        <td>${data.Hierarchy}</td>\r",
+							"        <td><a href=\"${data.ImageURL}\" target=\"_blank\">${data.ImageURL}</a></td>\r",
+							"\r",
+							"    </tr>\r",
+							"`).join('');\r",
+							"\r",
+							"let htmlOutput = `\r",
+							"    <style>\r",
+							"        table {\r",
+							"            border-collapse: collapse;\r",
+							"            width: 100%;\r",
+							"        }\r",
+							"        th, td {\r",
+							"            border: 1px solid #ddd;\r",
+							"            padding: 8px;\r",
+							"            text-align: left;\r",
+							"        }\r",
+							"        th {\r",
+							"            background-color: #f4f4f4;\r",
+							"        }\r",
+							"    </style>\r",
+							"    <h3>Occupations API Visualization</h3>\r",
+							"    <table>\r",
+							"        <thead>\r",
+							"            <tr>\r",
+							"                <th>Name</th>\r",
+							"                <th>Dimension</th>\r",
+							"                <th>Hierarchy</th>\r",
+							"                <th>Updated At</th>\r",
+							"            </tr>\r",
+							"        </thead>\r",
+							"        <tbody>\r",
+							"            ${tableRows}\r",
+							"        </tbody>\r",
+							"    </table>\r",
+							"`;\r",
+							"\r",
+							"\r",
+							"pm.visualizer.set(htmlOutput);\r",
+							"\r",
+							"\r",
+							"pm.test(\"HTTP Status Code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains array 'results'\", function () {\r",
+							"    pm.expect(response).to.have.property('results');\r",
+							"    pm.expect(response.results).to.be.an('array').that.is.not.empty;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Field 'image' have value false or null\", function () {\r",
+							"    response.results.forEach(item => {\r",
+							"        if (item.image) {\r",
+							"            pm.expect(item.image).to.have.property(\"url\");\r",
+							"        } else {\r",
+							"            pm.expect(item.image).to.equal(false);\r",
+							"        }\r",
+							"    });\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Windows\""
+					},
+					{
+						"key": "Referer",
+						"value": ""
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"131\", \"Chromium\";v=\"131\", \"Not_A Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/searchLegacy/?limit=100&dimension=PUMS%20Occupation&q=",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"searchLegacy",
+						""
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "100"
+						},
+						{
+							"key": "dimension",
+							"value": "PUMS%20Occupation"
+						},
+						{
+							"key": "q",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Industries",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"\r",
+							"pm.test(\"Schema Validation: Each industry has the required fields\", function () {\r",
+							"    response.results.forEach(item => {\r",
+							"        pm.expect(item).to.have.property(\"name\");\r",
+							"        pm.expect(item).to.have.property(\"dimension\");\r",
+							"        pm.expect(item).to.have.property(\"hierarchy\");\r",
+							"        pm.expect(item).to.have.property(\"key\");\r",
+							"        pm.expect(item).to.have.property(\"alts\");\r",
+							"        pm.expect(item).to.have.property(\"image\");\r",
+							"        if (item.image) {\r",
+							"            pm.expect(item.image).to.have.property(\"url\");\r",
+							"            pm.expect(item.image).to.have.property(\"author\");\r",
+							"        }\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"let results = response.results.map(item => ({\r",
+							"    Name: item.name || \"N/A\",\r",
+							"    Dimension: item.dimension || \"N/A\",\r",
+							"    Hierarchy: item.hierarchy || \"N/A\",\r",
+							"    Key: item.key || \"N/A\",\r",
+							"    Alts: item.alts ? item.alts.join(\", \") : \"No alts\",\r",
+							"    ImageURL: item.image?.url || \"No image\",\r",
+							"    Author: item.image?.author || \"N/A\"\r",
+							"}));\r",
+							"\r",
+							"\r",
+							"let tableRows = results.map(data => `\r",
+							"    <tr>\r",
+							"        <td>${data.Name}</td>\r",
+							"        <td>${data.Dimension}</td>\r",
+							"        <td>${data.Hierarchy}</td>\r",
+							"        <td>${data.Key}</td>\r",
+							"        <td>${data.ImageURL !== \"No image\" ? `<a href=\"${data.ImageURL}\" target=\"_blank\">${data.ImageURL}</a>` : \"No image\"}</td>\r",
+							"        <td>${data.Author}</td>\r",
+							"    </tr>\r",
+							"`).join('');\r",
+							"\r",
+							"let htmlOutput = `\r",
+							"    <style>\r",
+							"        table {\r",
+							"            border-collapse: collapse;\r",
+							"            width: 100%;\r",
+							"        }\r",
+							"        th, td {\r",
+							"            border: 1px solid #ddd;\r",
+							"            padding: 8px;\r",
+							"            text-align: left;\r",
+							"        }\r",
+							"        th {\r",
+							"            background-color: #f4f4f4;\r",
+							"        }\r",
+							"    </style>\r",
+							"    <h3>Industries API Visualization</h3>\r",
+							"    <table>\r",
+							"        <thead>\r",
+							"            <tr>\r",
+							"                <th>Name</th>\r",
+							"                <th>Dimension</th>\r",
+							"                <th>Hierarchy</th>\r",
+							"                <th>Key</th>\r",
+							"                <th>Image URL</th>\r",
+							"                <th>Author</th>\r",
+							"            </tr>\r",
+							"        </thead>\r",
+							"        <tbody>\r",
+							"            ${tableRows}\r",
+							"        </tbody>\r",
+							"    </table>\r",
+							"`;\r",
+							"\r",
+							"pm.visualizer.set(htmlOutput);\r",
+							"\r",
+							"\r",
+							"pm.test(\"HTTP Status Code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains 'results' array\", function () {\r",
+							"    pm.expect(response).to.have.property('results');\r",
+							"    pm.expect(response.results).to.be.an('array').that.is.not.empty;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Image field handles 'null' or 'false' values correctly\", function () {\r",
+							"    response.results.forEach(item => {\r",
+							"        if (item.image) {\r",
+							"            pm.expect(item.image.url).to.be.a('string');\r",
+							"        } else {\r",
+							"            pm.expect(item.image).to.equal(false);\r",
+							"        }\r",
+							"    });\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Windows\""
+					},
+					{
+						"key": "Referer",
+						"value": ""
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"131\", \"Chromium\";v=\"131\", \"Not_A Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/searchLegacy/?limit=100&dimension=PUMS%20Industry&q=",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"searchLegacy",
+						""
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "100"
+						},
+						{
+							"key": "dimension",
+							"value": "PUMS%20Industry"
+						},
+						{
+							"key": "q",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "restaurants-food",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"\r",
+							"pm.test(\"Schema Validation: Each item has the required fields\", function () {\r",
+							"    response.forEach(item => {\r",
+							"        pm.expect(item).to.have.property(\"id\");\r",
+							"        pm.expect(item).to.have.property(\"dimension\");\r",
+							"        pm.expect(item).to.have.property(\"hierarchy\");\r",
+							"        pm.expect(item).to.have.property(\"slug\");\r",
+							"        pm.expect(item).to.have.property(\"name\");\r",
+							"        pm.expect(item).to.have.property(\"contentId\");\r",
+							"        pm.expect(item).to.have.property(\"cubeName\");\r",
+							"        pm.expect(item).to.have.property(\"imageId\");\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"\r",
+							"let results = response.map(item => ({\r",
+							"    ID: item.id || \"N/A\",\r",
+							"    Dimension: item.dimension || \"N/A\",\r",
+							"    Hierarchy: item.hierarchy || \"N/A\",\r",
+							"    Slug: item.slug || \"N/A\",\r",
+							"    Name: item.name || \"N/A\",\r",
+							"    ContentID: item.contentId || \"N/A\",\r",
+							"    CubeName: item.cubeName || \"N/A\",\r",
+							"    ImageID: item.imageId !== null ? item.imageId : \"No Image\"\r",
+							"}));\r",
+							"\r",
+							"\r",
+							"let tableRows = results.map(data => `\r",
+							"    <tr>\r",
+							"        <td>${data.ID}</td>\r",
+							"        <td>${data.Dimension}</td>\r",
+							"        <td>${data.Hierarchy}</td>\r",
+							"        <td>${data.Slug}</td>\r",
+							"        <td>${data.Name}</td>\r",
+							"        <td>${data.ContentID}</td>\r",
+							"        <td>${data.CubeName}</td>\r",
+							"        <td>${data.ImageID}</td>\r",
+							"    </tr>\r",
+							"`).join('');\r",
+							"\r",
+							"let htmlOutput = `\r",
+							"    <style>\r",
+							"        table {\r",
+							"            border-collapse: collapse;\r",
+							"            width: 100%;\r",
+							"        }\r",
+							"        th, td {\r",
+							"            border: 1px solid #ddd;\r",
+							"            padding: 8px;\r",
+							"            text-align: left;\r",
+							"        }\r",
+							"        th {\r",
+							"            background-color: #f4f4f4;\r",
+							"        }\r",
+							"    </style>\r",
+							"    <h3>Restaurants-Food API Visualization</h3>\r",
+							"    <table>\r",
+							"        <thead>\r",
+							"            <tr>\r",
+							"                <th>ID</th>\r",
+							"                <th>Dimension</th>\r",
+							"                <th>Hierarchy</th>\r",
+							"                <th>Slug</th>\r",
+							"                <th>Name</th>\r",
+							"                <th>Content ID</th>\r",
+							"                <th>Cube Name</th>\r",
+							"                <th>Image ID</th>\r",
+							"            </tr>\r",
+							"        </thead>\r",
+							"        <tbody>\r",
+							"            ${tableRows}\r",
+							"        </tbody>\r",
+							"    </table>\r",
+							"`;\r",
+							"\r",
+							"\r",
+							"pm.visualizer.set(htmlOutput);\r",
+							"\r",
+							"\r",
+							"pm.test(\"HTTP Status Code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is an array and is not empty\", function () {\r",
+							"    pm.expect(response).to.be.an('array').that.is.not.empty;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"ImageID field handles null values\", function () {\r",
+							"    response.forEach(item => {\r",
+							"        pm.expect(item.imageId).to.satisfy(val => val === null || typeof val === 'number');\r",
+							"    });\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "es-ES,es;q=0.9"
+					},
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.2.793107309.1734057081; _hjSessionUser_1257570=eyJpZCI6IjIyNzkzMjVkLTNhZWUtNTUzNS1hYzgyLTJlOTc5ZTQ2NDZlYiIsImNyZWF0ZWQiOjE3MzQwNTcwODE0MjMsImV4aXN0aW5nIjp0cnVlfQ==; _gid=GA1.2.1934355065.1734256546; _hjSession_1257570=eyJpZCI6Ijk1YzNmYTlhLWJmNjYtNDIxOS05OTM4LWEyOGRlODc5YTY3ZCIsImMiOjE3MzQyNzQwMTEwMzAsInMiOjAsInIiOjAsInNiIjowLCJzciI6MCwic2UiOjAsImZzIjowLCJzcCI6MH0=; _gat_tracker1=1; _ga_9X03EHGTVS=GS1.2.1734271965.8.1.1734277059.0.0.0"
+					},
+					{
+						"key": "Sec-Fetch-Dest",
+						"value": "empty"
+					},
+					{
+						"key": "Sec-Fetch-Mode",
+						"value": "cors"
+					},
+					{
+						"key": "Sec-Fetch-Site",
+						"value": "same-origin"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"131\", \"Chromium\";v=\"131\", \"Not_A Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Windows\""
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/naics/similar/restaurants-food-services",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"naics",
+						"similar",
+						"restaurants-food-services"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "General_Psychology",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// 1. Parse the JSON response\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"// 2. Schema Validation\r",
+							"pm.test(\"Schema Validation: Each item has the required fields\", function () {\r",
+							"    response.forEach(item => {\r",
+							"        pm.expect(item).to.have.property(\"id\");\r",
+							"        pm.expect(item).to.have.property(\"zvalue\");\r",
+							"        pm.expect(item).to.have.property(\"dimension\");\r",
+							"        pm.expect(item).to.have.property(\"hierarchy\");\r",
+							"        pm.expect(item).to.have.property(\"slug\");\r",
+							"        pm.expect(item).to.have.property(\"name\");\r",
+							"        pm.expect(item).to.have.property(\"contentId\");\r",
+							"        pm.expect(item).to.have.property(\"cubeName\");\r",
+							"        pm.expect(item).to.have.property(\"imageId\");\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"// 3. Dynamic Data Extraction\r",
+							"let results = response.map(item => ({\r",
+							"    ID: item.id || \"N/A\",\r",
+							"    ZValue: item.zvalue || \"N/A\",\r",
+							"    Dimension: item.dimension || \"N/A\",\r",
+							"    Hierarchy: item.hierarchy || \"N/A\",\r",
+							"    Slug: item.slug || \"N/A\",\r",
+							"    Name: item.name || \"N/A\",\r",
+							"    ContentID: item.contentId || \"N/A\",\r",
+							"    CubeName: item.cubeName || \"N/A\",\r",
+							"    ImageID: item.imageId !== null ? item.imageId : \"No Image\"\r",
+							"}));\r",
+							"\r",
+							"// 4. Build dynamic HTML table for visualization\r",
+							"let tableRows = results.map(data => `\r",
+							"    <tr>\r",
+							"        <td>${data.ID}</td>\r",
+							"        <td>${data.Dimension}</td>\r",
+							"        <td>${data.Hierarchy}</td>\r",
+							"        <td>${data.Slug}</td>\r",
+							"        <td>${data.Name}</td>\r",
+							"        <td>${data.ContentID}</td>\r",
+							"        <td>${data.ImageID}</td>\r",
+							"    </tr>\r",
+							"`).join('');\r",
+							"\r",
+							"let htmlOutput = `\r",
+							"    <style>\r",
+							"        table {\r",
+							"            border-collapse: collapse;\r",
+							"            width: 100%;\r",
+							"        }\r",
+							"        th, td {\r",
+							"            border: 1px solid #ddd;\r",
+							"            padding: 8px;\r",
+							"            text-align: left;\r",
+							"        }\r",
+							"        th {\r",
+							"            background-color: #f4f4f4;\r",
+							"        }\r",
+							"    </style>\r",
+							"    <h3>General Psychology API Visualization</h3>\r",
+							"    <table>\r",
+							"        <thead>\r",
+							"            <tr>\r",
+							"                <th>ID</th>\r",
+							"                <th>Dimension</th>\r",
+							"                <th>Hierarchy</th>\r",
+							"                <th>Slug</th>\r",
+							"                <th>Name</th>\r",
+							"                <th>Content ID</th>\r",
+							"                <th>Image ID</th>\r",
+							"            </tr>\r",
+							"        </thead>\r",
+							"        <tbody>\r",
+							"            ${tableRows}\r",
+							"        </tbody>\r",
+							"    </table>\r",
+							"`;\r",
+							"\r",
+							"// 5. Display the table in Postman Visualize tab\r",
+							"pm.visualizer.set(htmlOutput);\r",
+							"\r",
+							"// 6. Error Handling\r",
+							"pm.test(\"HTTP Status Code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is an array and is not empty\", function () {\r",
+							"    pm.expect(response).to.be.an('array').that.is.not.empty;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"ImageID field handles null values\", function () {\r",
+							"    response.forEach(item => {\r",
+							"        pm.expect(item.imageId).to.satisfy(val => val === null || typeof val === 'number');\r",
+							"    });\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "es-ES,es;q=0.9"
+					},
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.2.793107309.1734057081; _hjSessionUser_1257570=eyJpZCI6IjIyNzkzMjVkLTNhZWUtNTUzNS1hYzgyLTJlOTc5ZTQ2NDZlYiIsImNyZWF0ZWQiOjE3MzQwNTcwODE0MjMsImV4aXN0aW5nIjp0cnVlfQ==; _gid=GA1.2.1934355065.1734256546; _hjSession_1257570=eyJpZCI6Ijk1YzNmYTlhLWJmNjYtNDIxOS05OTM4LWEyOGRlODc5YTY3ZCIsImMiOjE3MzQyNzQwMTEwMzAsInMiOjAsInIiOjAsInNiIjowLCJzciI6MCwic2UiOjAsImZzIjowLCJzcCI6MH0=; _gat_tracker1=1; _ga_9X03EHGTVS=GS1.2.1734271965.8.1.1734278376.0.0.0"
+					},
+					{
+						"key": "Sec-Fetch-Dest",
+						"value": "empty"
+					},
+					{
+						"key": "Sec-Fetch-Mode",
+						"value": "cors"
+					},
+					{
+						"key": "Sec-Fetch-Site",
+						"value": "same-origin"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"131\", \"Chromium\";v=\"131\", \"Not_A Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Windows\""
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/cip/similar/general-psychology",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"cip",
+						"similar",
+						"general-psychology"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Intellectual property and related products",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Schema Validation: Each item has the required fields\", function () {\r",
+							"    response.forEach(item => {\r",
+							"        pm.expect(item).to.have.property(\"id\");\r",
+							"        pm.expect(item).to.have.property(\"dimension\");\r",
+							"        pm.expect(item).to.have.property(\"hierarchy\");\r",
+							"        pm.expect(item).to.have.property(\"slug\");\r",
+							"        pm.expect(item).to.have.property(\"name\");\r",
+							"        pm.expect(item).to.have.property(\"contentId\");\r",
+							"        pm.expect(item).to.have.property(\"imageId\");\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"let results = response.map(item => ({\r",
+							"    ID: item.id || \"N/A\",\r",
+							"    ZValue: item.zvalue || \"N/A\",\r",
+							"    Dimension: item.dimension || \"N/A\",\r",
+							"    Hierarchy: item.hierarchy || \"N/A\",\r",
+							"    Slug: item.slug || \"N/A\",\r",
+							"    Name: item.name || \"N/A\",\r",
+							"    ContentID: item.contentId || \"N/A\",\r",
+							"    CubeName: item.cubeName || \"N/A\",\r",
+							"    ImageID: item.imageId !== null ? item.imageId : \"No Image\"\r",
+							"}));\r",
+							"\r",
+							"let tableRows = results.map(data => `\r",
+							"    <tr>\r",
+							"        <td>${data.ID}</td>\r",
+							"        <td>${data.Dimension}</td>\r",
+							"        <td>${data.Hierarchy}</td>\r",
+							"        <td>${data.Slug}</td>\r",
+							"        <td>${data.Name}</td>\r",
+							"        <td>${data.ContentID}</td>\r",
+							"        <td>${data.ImageID}</td>\r",
+							"    </tr>\r",
+							"`).join('');\r",
+							"\r",
+							"let htmlOutput = `\r",
+							"    <style>\r",
+							"        table {\r",
+							"            border-collapse: collapse;\r",
+							"            width: 100%;\r",
+							"        }\r",
+							"        th, td {\r",
+							"            border: 1px solid #ddd;\r",
+							"            padding: 8px;\r",
+							"            text-align: left;\r",
+							"        }\r",
+							"        th {\r",
+							"            background-color: #f4f4f4;\r",
+							"        }\r",
+							"    </style>\r",
+							"    <h3>Intellectual Property and Related Products API Visualization</h3>\r",
+							"    <table>\r",
+							"        <thead>\r",
+							"            <tr>\r",
+							"                <th>ID</th>\r",
+							"                <th>Dimension</th>\r",
+							"                <th>Hierarchy</th>\r",
+							"                <th>Slug</th>\r",
+							"                <th>Name</th>\r",
+							"                <th>Content ID</th>\r",
+							"                <th>Image ID</th>\r",
+							"            </tr>\r",
+							"        </thead>\r",
+							"        <tbody>\r",
+							"            ${tableRows}\r",
+							"        </tbody>\r",
+							"    </table>\r",
+							"`;\r",
+							"\r",
+							"pm.visualizer.set(htmlOutput);\r",
+							"\r",
+							"pm.test(\"HTTP Status Code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is an array and is not empty\", function () {\r",
+							"    pm.expect(response).to.be.an('array').that.is.not.empty;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"ImageID field handles null values\", function () {\r",
+							"    response.forEach(item => {\r",
+							"        pm.expect(item.imageId).to.satisfy(val => val === null || typeof val === 'number');\r",
+							"    });\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "es-ES,es;q=0.9"
+					},
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.2.793107309.1734057081; _hjSessionUser_1257570=eyJpZCI6IjIyNzkzMjVkLTNhZWUtNTUzNS1hYzgyLTJlOTc5ZTQ2NDZlYiIsImNyZWF0ZWQiOjE3MzQwNTcwODE0MjMsImV4aXN0aW5nIjp0cnVlfQ==; _gid=GA1.2.1934355065.1734256546; _hjSession_1257570=eyJpZCI6Ijk1YzNmYTlhLWJmNjYtNDIxOS05OTM4LWEyOGRlODc5YTY3ZCIsImMiOjE3MzQyNzQwMTEwMzAsInMiOjAsInIiOjAsInNiIjowLCJzciI6MCwic2UiOjAsImZzIjowLCJzcCI6MH0=; _gat_tracker1=1; _ga_9X03EHGTVS=GS1.2.1734271965.8.1.1734279471.0.0.0"
+					},
+					{
+						"key": "Sec-Fetch-Dest",
+						"value": "empty"
+					},
+					{
+						"key": "Sec-Fetch-Mode",
+						"value": "cors"
+					},
+					{
+						"key": "Sec-Fetch-Site",
+						"value": "same-origin"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"131\", \"Chromium\";v=\"131\", \"Not_A Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Windows\""
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/napcs/similar/intellectual-property-and-related-products",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"napcs",
+						"similar",
+						"intellectual-property-and-related-products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Florida International University",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// 1. Parse the JSON response\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"// 2. Schema Validation\r",
+							"pm.test(\"Schema Validation: Each item has the required fields\", function () {\r",
+							"    response.forEach(item => {\r",
+							"        pm.expect(item).to.have.property(\"id\");\r",
+							"        pm.expect(item).to.have.property(\"zvalue\");\r",
+							"        pm.expect(item).to.have.property(\"dimension\");\r",
+							"        pm.expect(item).to.have.property(\"hierarchy\");\r",
+							"        pm.expect(item).to.have.property(\"slug\");\r",
+							"        pm.expect(item).to.have.property(\"name\");\r",
+							"        pm.expect(item).to.have.property(\"contentId\");\r",
+							"        pm.expect(item).to.have.property(\"cubeName\");\r",
+							"        pm.expect(item).to.have.property(\"imageId\");\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"// 3. Dynamic Data Extraction\r",
+							"let results = response.map(item => ({\r",
+							"    ID: item.id || \"N/A\",\r",
+							"    ZValue: item.zvalue || \"N/A\",\r",
+							"    Dimension: item.dimension || \"N/A\",\r",
+							"    Hierarchy: item.hierarchy || \"N/A\",\r",
+							"    Slug: item.slug || \"N/A\",\r",
+							"    Name: item.name || \"N/A\",\r",
+							"    ContentID: item.contentId || \"N/A\",\r",
+							"    CubeName: item.cubeName || \"N/A\",\r",
+							"    ImageID: item.imageId !== null ? item.imageId : \"No Image\"\r",
+							"}));\r",
+							"\r",
+							"// 4. Build dynamic HTML table for visualization\r",
+							"let tableRows = results.map(data => `\r",
+							"    <tr>\r",
+							"        <td>${data.ID}</td>\r",
+							"        <td>${data.Dimension}</td>\r",
+							"        <td>${data.Hierarchy}</td>\r",
+							"        <td>${data.Slug}</td>\r",
+							"        <td>${data.Name}</td>\r",
+							"        <td>${data.ContentID}</td>\r",
+							"        <td>${data.ImageID}</td>\r",
+							"    </tr>\r",
+							"`).join('');\r",
+							"\r",
+							"let htmlOutput = `\r",
+							"    <style>\r",
+							"        table {\r",
+							"            border-collapse: collapse;\r",
+							"            width: 100%;\r",
+							"        }\r",
+							"        th, td {\r",
+							"            border: 1px solid #ddd;\r",
+							"            padding: 8px;\r",
+							"            text-align: left;\r",
+							"        }\r",
+							"        th {\r",
+							"            background-color: #f4f4f4;\r",
+							"        }\r",
+							"    </style>\r",
+							"    <h3>Florida International University API Visualization</h3>\r",
+							"    <table>\r",
+							"        <thead>\r",
+							"            <tr>\r",
+							"                <th>ID</th>\r",
+							"                <th>Dimension</th>\r",
+							"                <th>Hierarchy</th>\r",
+							"                <th>Slug</th>\r",
+							"                <th>Name</th>\r",
+							"                <th>Content ID</th>\r",
+							"                <th>Image ID</th>\r",
+							"            </tr>\r",
+							"        </thead>\r",
+							"        <tbody>\r",
+							"            ${tableRows}\r",
+							"        </tbody>\r",
+							"    </table>\r",
+							"`;\r",
+							"\r",
+							"// 5. Display the table in Postman Visualize tab\r",
+							"pm.visualizer.set(htmlOutput);\r",
+							"\r",
+							"// 6. Error Handling\r",
+							"pm.test(\"HTTP Status Code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is an array and is not empty\", function () {\r",
+							"    pm.expect(response).to.be.an('array').that.is.not.empty;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"ImageID field handles null values\", function () {\r",
+							"    response.forEach(item => {\r",
+							"        pm.expect(item.imageId).to.satisfy(val => val === null || typeof val === 'number');\r",
+							"    });\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "es-ES,es;q=0.9"
+					},
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "Cookie",
+						"value": "_ga=GA1.2.793107309.1734057081; _hjSessionUser_1257570=eyJpZCI6IjIyNzkzMjVkLTNhZWUtNTUzNS1hYzgyLTJlOTc5ZTQ2NDZlYiIsImNyZWF0ZWQiOjE3MzQwNTcwODE0MjMsImV4aXN0aW5nIjp0cnVlfQ==; _gid=GA1.2.1934355065.1734256546; _hjSession_1257570=eyJpZCI6Ijk1YzNmYTlhLWJmNjYtNDIxOS05OTM4LWEyOGRlODc5YTY3ZCIsImMiOjE3MzQyNzQwMTEwMzAsInMiOjAsInIiOjAsInNiIjowLCJzciI6MCwic2UiOjAsImZzIjowLCJzcCI6MH0=; _gat_tracker1=1; _ga_9X03EHGTVS=GS1.2.1734271965.8.1.1734280765.0.0.0"
+					},
+					{
+						"key": "Sec-Fetch-Dest",
+						"value": "empty"
+					},
+					{
+						"key": "Sec-Fetch-Mode",
+						"value": "cors"
+					},
+					{
+						"key": "Sec-Fetch-Site",
+						"value": "same-origin"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"131\", \"Chromium\";v=\"131\", \"Not_A Brand\";v=\"24\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Windows\""
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/university/similar/florida-international-university",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"university",
+						"similar",
+						"florida-international-university"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
